@@ -2,18 +2,22 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Sortir.com{% endblock %}</title>
         {# Run `composer require symfony/webpack-encore-bundle`
            and uncomment the following Encore helpers to start using Symfony UX #}
-        {% block stylesheets %}
-            {#{{ encore_entry_link_tags('app') }}#}
-        {% endblock %}
 
-        {% block javascripts %}
-            {#{{ encore_entry_script_tags('app') }}#}
-        {% endblock %}
+       <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}" media="all">
     </head>
-    <body>
+
+    <body id="demo">
+
+        <header>
+            {% include('include/nav.html.twig') %}
+        </header>
+
         {% block body %}{% endblock %}
+
+
     </body>
 </html>
