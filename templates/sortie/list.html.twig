@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sortie Liste ! | {{ parent() }} {% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Sortie</h1>
+    {{ dump(sorties) }}
+    {# {% if sorties.lenght > 0 %} #}
+    <div class="row mt-4">
+        <!-- List of items -->
+        <div class="col-md-8">
+            <article>
+                {# <div>
+                    <p>
+                        Nom du sortie : {{ sortie.nom }} | Info sortie : {{ sortie.infosSortie }}
+                    </p>
+                </div>
+                <div>
+                    <p>
+                        {{ sortie.organisateur.email}} | {{ sortie.organisateur.pseudo}}
+                    </p>
+                </div> #}
+            
+            </article>
+        </div>
+        <!-- Summary -->
+        <div class="col-md-4"></div>
+    </div>
+    {# {% else %} #}
+    <div class="alert alert-info">
+        Aucun sortie crée pour le moment !. Allez sur <a href="{{ path('sortie_create') }}">Create sortie !</a>.
+    </div>
+    {# {% endif %} #}
+</div>
+{% endblock %}
