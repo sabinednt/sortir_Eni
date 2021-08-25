@@ -52,17 +52,19 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
             'mot_passe' => $request->request->get('motPasse'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
+
         $request->getSession()->set(
             Security::LAST_USERNAME,
             $credentials['email']
         );
-
+        dump($credentials);
         return $credentials;
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
+        dump($token);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
