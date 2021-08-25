@@ -49,7 +49,7 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
     {
         $credentials = [
             'email' => $request->request->get('email'),
-            'password' => $request->request->get('password'),
+            'mot_passe' => $request->request->get('motPasse'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
         $request->getSession()->set(
@@ -78,7 +78,7 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        return $this->passwordEncoder->isPasswordValid($user, $credentials['mot_passe']);
     }
 
     /**
@@ -86,7 +86,7 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
      */
     public function getPassword($credentials): ?string
     {
-        return $credentials['password'];
+        return $credentials['mot_passe'];
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
@@ -94,9 +94,9 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
-        //todo... chemin vers la page d'accueil
+
         return new RedirectResponse($this->urlGenerator->generate('main_home'));
-       // throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+       /** throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);*/
     }
 
     protected function getLoginUrl()
