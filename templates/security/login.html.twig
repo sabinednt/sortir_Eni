@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+
+<form method="post">
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    {% if app.user %}
+        <div class="mb-3">
+            You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+        </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div id="login-card" class=" border-0 shadow rounded-3 my-5 ">
+                    <div class="card-body p-4 p-sm-5">
+                        <h5 class="card-title text-center mb-5 fw-bold fs-5">Sign In</h5>
+
+                        <form>
+                            <div class="form-floating mb-3">
+                                <input type="email" value="{{ last_username }}" name="email" class="form-control" id="inputEmail" placeholder="name@example.com" autocomplete="email" required autofocus>
+                                <label for="inputEmail">Email address</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" name="motPasse" class="form-control" id="inputPassword" placeholder="Password" autocomplete="current-password" required>
+                                <label for="inputPassword">Password</label>
+                            </div>
+
+                            <input type="hidden" name="_csrf_token"
+                                       value="{{ csrf_token('authenticate') }}"
+                            >
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="_remerber_me">
+                                <label class="form-check-label" for="rememberPasswordCheck">
+                                    Remember me
+                                </label>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">Sign
+                                    in</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
