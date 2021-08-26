@@ -30,7 +30,7 @@ class Ville
     private $code_postal;
 
     /**
-     * @ORM\OneToMany(targetEntity=Lieu::class, mappedBy="ville", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Lieu::class, mappedBy="ville", orphanRemoval=true, cascade={"persist"})
      */
     private $lieux;
 

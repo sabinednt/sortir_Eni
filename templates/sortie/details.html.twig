@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Aficher une sortie ! | {{ parent() }} {% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12 mx-auto">
+            <div id="detail-sortie-card" class=" border-0 shadow rounded-3 my-5 ">
+                <div class="card-body p-4 p-sm-5">
+                    <div class="row">
+                        <div class="col">
+                            <h5>Nom de la sortie :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.nom }}
+                        </div>
+                        <div class="col">
+                            <h5>Campus :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.campus.nom }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h5>Date et Heure de la Sortie :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.dateHeureDebut|date('d/m/Y') }}
+                        </div>
+                        <div class="col">
+                            <h5>Lieu :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.lieu.nom }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h5>Date limite d'inscription :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.dateLimiteInscription|date('d/m/Y') }}
+                        </div>
+                        <div class="col">
+                            <h5>Rue :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.lieu.rue }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h5>Nombre de places :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.nbInscriptionsMax }}
+                        </div>
+                        <div class="col">
+                            <h5>Code Postal :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.lieu.ville.codePostal }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h5>Durée :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.duree }} minutes
+                        </div>
+                        <div class="col">
+                            <h5>Latitude :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.lieu.latitude }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h5>Description et infos :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.infosSortie }} minutes
+                        </div>
+                        <div class="col">
+                            <h5>Longitude :</h5>
+                        </div>
+                        <div class="col">
+                            {{ sortie.lieu.longitude }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="list-sorties-card" class="p-5">
+    <h2>Liste des participants inscrits :</h2>
+    <table class="table table-responsive">
+        <tr>
+            <th>Pseudo</th>
+            <th>Nom</th>
+        </tr>
+        {% for participant in sortie.participants %}
+        <tr>
+            <td>{{ participant.pseudo }}</td>
+            <td>{{ participant.nom }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
+
+
+
