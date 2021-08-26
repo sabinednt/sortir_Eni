@@ -57,14 +57,13 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
             Security::LAST_USERNAME,
             $credentials['email']
         );
-        dump($credentials);
+
         return $credentials;
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
-        dump($token);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
@@ -98,7 +97,7 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
         }
 
         return new RedirectResponse($this->urlGenerator->generate('main_home'));
-       /** throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);*/
+        /* throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);*/
     }
 
     protected function getLoginUrl()

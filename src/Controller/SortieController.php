@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Participant;
+use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Form\SortieType;
+use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,33 +28,46 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/create", name="sortie_create")
      */
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
     {
         $sortie = new Sortie();
         $sortieForm = $this->createForm(SortieType::class, $sortie);
 
         $sortieForm->handleRequest($request);
-
+        // todo gerer les etat
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
-            $sortie->setDateHeureDebut(new \DateTime());
-            // $user = $this->getUser();
+            switch ($sortieForm->getClickedButton()->getName()) {
+                case 'save':
+                    $participant = $this->getUser();
+                    $etat = $etatRepository->findOneBy(['libelle' => 'Créée']);
+                    $sortie->setOrganisateur($participant);
+                    $sortie->setEtat($etat);
+                    $entityManager->persist($sortie);
+                    $entityManager->flush();
 
-            $participant = $this->getDoctrine()
-                ->getRepository(Participant::class)
-                ->findOneBy(['id' => 1]);
+                    $this->addFlash(
+                        'success',
+                        'sortie créé ! Merci beaucoup.'
+                    );
+                    $nextAction = 'sortie_list';
+                    break;
+                case 'saveAndPublish':
+                    $participant = $this->getUser();
+                    $etat = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
+                    $sortie->setOrganisateur($participant);
+                    $sortie->setEtat($etat);
+                    $entityManager->persist($sortie);
+                    $entityManager->flush();
 
-            dump($participant);
+                    $this->addFlash(
+                        'success',
+                        'sortie créé et Publiée ! Merci beaucoup.'
+                    );
+                    $nextAction = 'sortie_list';
+                    break;
+            }
 
-            $sortie->setOrganisateur($participant);
-            $entityManager->persist($sortie);
-            $entityManager->flush();
-
-            $this->addFlash(
-               'success',
-               'sortie added! Good job.'
-            );
-
-            return $this->redirectToRoute('sortie_list', []);
+            return $this->redirectToRoute($nextAction);
         }
 
         return $this->render('sortie/create.html.twig', [
@@ -64,15 +78,27 @@ class SortieController extends AbstractController
     /**
      * @Route("/sorties", name="sortie_list")
      */
-    public function list(SortieRepository $serieRepository): Response
+    public function list(SortieRepository $sortieRepository): Response
     {
-        // $series = $serieRepository->findAll();
-        // $series = $serieRepository->findBy([], ['popularity' => 'DESC', 'vote' => 'DESC'], 30);
-        // $sorties = $serieRepository->findSorties();
-        $sorties = $serieRepository->findAll();
-
-        dump($sorties);
+        // $series = $sortieRepository->findAll();
+        // $series = $sortieRepository->findBy([], ['nom' => 'DESC', 'dateLimiteInscription' => 'DESC'], 30);
+        $sorties = $sortieRepository->findSorties();
+        // $sorties = $sortieRepository->findAll();
 
         return $this->render('sortie/list.html.twig', ['sorties' => $sorties]);
+    }
+
+    /**
+     * @Route("/sortie/details/{id}", name="sortie_details")
+     */
+    public function details(SortieRepository $sortieRepository, int $id): Response
+    {
+        $sortie = $sortieRepository->find($id);
+
+        if (!$sortie) {
+            throw $this->createNotFoundException('Sortie non trouvée !');
+        }
+
+        return $this->render('sortie/details.html.twig', ['sortie' => $sortie]);
     }
 }

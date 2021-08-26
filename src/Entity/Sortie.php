@@ -21,33 +21,45 @@ class Sortie
     private $id;
 
     /**
-     * @Assert\NotBlank(message="Please provider a name for the sortie !")
-     * @Assert\Length(min=2, max=255)
+     * @Assert\NotBlank(message="Veuillez fournir un nom pour la sortie !")
+     * @Assert\Length(min=2)
      * @ORM\Column(type="string", length=255)
      */
     private $nom;
 
     /**
+     * @Assert\NotBlank(message="Veuillez fournir un date ey heure pour la sortie !")
      * @ORM\Column(type="datetime")
      */
     private $dateHeureDebut;
 
     /**
+     * @Assert\Range(
+     *      min = 10,
+     *      max = 90,
+     *      notInRangeMessage = "Vous devez saisir une durée comprise entre {{10}} et {{90}} minutes.",
+     * )
      * @ORM\Column(type="integer")
      */
     private $duree;
 
     /**
+     * @Assert\NotBlank(message="Veuillez fournir un date pour la sortie !")
+     *
      * @ORM\Column(type="datetime")
      */
     private $dateLimiteInscription;
 
     /**
+     * @Assert\NotBlank(message="Veuillez fournir un nombre max des participants pour la sortie !")
+     *
      * @ORM\Column(type="integer")
      */
     private $nbInscriptionsMax;
 
     /**
+     * @Assert\NotBlank(message="Veuillez fournir une description et des info pour la sortie !")
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $infosSortie;

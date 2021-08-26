@@ -3,10 +3,21 @@
 {% block title %}Create une nouvelle Sortie !{% endblock %}
 
 {% block body %}
-<div>
+{# <div>
     {{ form_start(sortieForm) }}
     {{ form_widget(sortieForm) }}
     <button type="submit">Create sortie!</button>
     {{ form_end(sortieForm) }}
+</div> #}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            {{ form_start(sortieForm) }}
+                {{ form_widget(sortieForm) }}
+                <a href="{{ path('sortie_list') }}" title="Annuler">Annuler</a>
+            {{ form_end(sortieForm) }}
+        </div>
+    </div>
 </div>
+
 {% endblock %}
