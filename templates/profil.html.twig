@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+
+    <img src="{{ participant.fichier }}">
+
+    <h2>Mon profil</h2>
+
+
+    <div>
+
+        {{ form_start(participantForm) }}
+        {{ form_widget(participantForm) }}
+
+        <button>Enregistrer</button>
+
+        {{ form_end(participantForm) }}
+
+        <button><a href="{{ path('home') }}" title="Annuler">Annuler</a></button>
+
+
+    </div>
+{% endblock %}
+
