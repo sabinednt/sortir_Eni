@@ -30,6 +30,8 @@ class SortieController extends AbstractController
      */
     public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
     {
+        // $callApiVilleService->getFranceVille();
+
         $sortie = new Sortie();
         $sortieForm = $this->createForm(SortieType::class, $sortie);
 
@@ -98,6 +100,84 @@ class SortieController extends AbstractController
         if (!$sortie) {
             throw $this->createNotFoundException('Sortie non trouvée !');
         }
+
+        return $this->render('sortie/details.html.twig', ['sortie' => $sortie]);
+    }
+
+    /**
+     * @Route("/sortie/inscription/{id}", name="sortie_inscription")
+     */
+    public function inscription(EntityManagerInterface $entityManager, SortieRepository $sortieRepository, int $id): Response
+    {
+        $sortie = $sortieRepository->find($id);
+        $participant = $this->getUser();
+
+        if (!$sortie) {
+            throw $this->createNotFoundException('Sortie non trouvée !');
+        }
+        $sortie->addParticipant($participant);
+
+        $entityManager->persist($sortie);
+        $entityManager->flush();
+
+        $this->addFlash(
+                        'success',
+                        'Vous été bien enregistre dans la sortie ! Merci beaucoup.'
+                    );
+
+        return $this->render('sortie/details.html.twig', ['sortie' => $sortie]);
+    }
+
+    /**
+     * @Route("/sortie/desister/{id}", name="sortie_desister")
+     */
+    public function desister(EntityManagerInterface $entityManager, SortieRepository $sortieRepository, int $id): Response
+    {
+        $sortie = $sortieRepository->find($id);
+        $participant = $this->getUser();
+
+        if (!$sortie) {
+            throw $this->createNotFoundException('Sortie non trouvée !');
+        }
+
+        $sortie->removeParticipant($participant);
+
+        $entityManager->persist($sortie);
+        $entityManager->flush();
+
+        $this->addFlash(
+                        'success',
+                        'Vous été bien desisncrit de la sortie ! Merci beaucoup.'
+                    );
+
+        return $this->render('sortie/details.html.twig', ['sortie' => $sortie]);
+    }
+
+    /**
+     * @Route("/sortie/publier/{id}", name="sortie_publier")
+     */
+    public function publier(EntityManagerInterface $entityManager, SortieRepository $sortieRepository, EtatRepository $etatRepository, int $id): Response
+    {
+        $sortie = $sortieRepository->find($id);
+        $organisateur = $this->getUser();
+
+        if (!$sortie) {
+            throw $this->createNotFoundException('Sortie non trouvée !');
+        } elseif ($sortie->getOrganisateur() !== $organisateur) {
+            throw $this->createNotFoundException('Vous n\'aves pas les droit de publier cette sortie !');
+        }
+
+        $etat = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
+
+        $sortie->setEtat($etat);
+
+        $entityManager->persist($sortie);
+        $entityManager->flush();
+
+        $this->addFlash(
+                        'success',
+                        'Vous aves bien publie la sortie ! Merci beaucoup.'
+                    );
 
         return $this->render('sortie/details.html.twig', ['sortie' => $sortie]);
     }
