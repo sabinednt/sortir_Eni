@@ -36,20 +36,6 @@ class ParticipantRepository extends ServiceEntityRepository implements PasswordU
         $this->_em->flush();
     }
 
-       /**
-     * @return Participant Return Participant
-     */
-    public function findByPseudo($pseudo): ?Participant
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.pseudo = :pseudo')
-            ->setParameter('pseudo', $pseudo)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-
     // /**
     //  * @return Participant[] Returns an array of Participant objects
     //  */
@@ -67,15 +53,27 @@ class ParticipantRepository extends ServiceEntityRepository implements PasswordU
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?Participant
+    /**
+     * @return Participant Return Participant
+     */
+    public function findByPseudo($pseudo): ?Participant
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('p.pseudo = :pseudo')
+            ->setParameter('pseudo', $pseudo)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findOneByEmail($email): ?Participant
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.email = :email')
+            ->setParameter('email', $email)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
 }

@@ -17,21 +17,26 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Campus</a>
                     </li>
-
-
                 {% endif %}
-
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('sortie_create') }}">Create une Sortie</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('sortie_list') }}">Lister les Sorties</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('main_home') }}">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Mon Profil</a>
+                    <a class="nav-link" href="{{ path('profile_modif') }}">Mon Profil</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_logout') }}">Se Déconnecter</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Bienvenue {{ app.user.pseudo }}</a>
 
-
+                </li>
             </ul>
         </div>
       {% endif %}

@@ -2,73 +2,58 @@
 
 namespace App\Controller;
 
-use App\Entity\Etat;
 use App\Entity\Sortie;
+use App\Form\AnnulSortieType;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
-use App\Form\AnnulSortieType;
+use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SortieController extends AbstractController
 {
     /**
-     * @Route("/sortie", name="sortie")
-     */
-    public function index(): Response
-    {
-        return $this->render('sortie/index.html.twig', [
-            'controller_name' => 'SortieController',
-        ]);
-    }
-
-    /**
      * @Route("/sortie/create", name="sortie_create")
      */
-    public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
+    public function create(Request $request, EntityManagerInterface $entityManager, ParticipantRepository $participantRepository, EtatRepository $etatRepository): Response
     {
-        // $callApiVilleService->getFranceVille();
-
         $sortie = new Sortie();
         $sortieForm = $this->createForm(SortieType::class, $sortie);
 
         $sortieForm->handleRequest($request);
-        // todo gerer les etat
+
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
             switch ($sortieForm->getClickedButton()->getName()) {
                 case 'save':
-                    $participant = $this->getUser();
-                    $etat = $etatRepository->findOneBy(['libelle' => 'Créée']);
-                    $sortie->setOrganisateur($participant);
-                    $sortie->setEtat($etat);
-                    $entityManager->persist($sortie);
-                    $entityManager->flush();
-
-                    $this->addFlash(
-                        'success',
-                        'sortie créé ! Merci beaucoup.'
-                    );
+                    $libelle = 'Créée';
+                    $message = 'sortie créé ! Merci beaucoup.';
                     $nextAction = 'sortie_list';
                     break;
                 case 'saveAndPublish':
-                    $participant = $this->getUser();
-                    $etat = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
-                    $sortie->setOrganisateur($participant);
-                    $sortie->setEtat($etat);
-                    $entityManager->persist($sortie);
-                    $entityManager->flush();
-
-                    $this->addFlash(
-                        'success',
-                        'sortie créé et Publiée ! Merci beaucoup.'
-                    );
+                    $libelle = 'Ouverte';
+                    $message = 'sortie créé et Publiée ! Merci beaucoup.';
                     $nextAction = 'sortie_list';
                     break;
             }
+
+            $email = $this->getUser()->getUsername();
+            $participant = $participantRepository->findOneByEmail($email);
+
+            $etat = $etatRepository->findOneBy(['libelle' => $libelle]);
+            $sortie->setOrganisateur($participant);
+            $sortie->setEtat($etat);
+            $entityManager->persist($sortie);
+            $entityManager->flush();
+
+            $this->addFlash(
+                'success',
+                $message
+            );
 
             return $this->redirectToRoute($nextAction);
         }
@@ -85,8 +70,10 @@ class SortieController extends AbstractController
     {
         // $series = $sortieRepository->findAll();
         // $series = $sortieRepository->findBy([], ['nom' => 'DESC', 'dateLimiteInscription' => 'DESC'], 30);
-        $sorties = $sortieRepository->findSorties();
-        // $sorties = $sortieRepository->findAll();
+        // $sorties = $sortieRepository->findSorties();
+        $sorties = $sortieRepository->findAll();
+
+        // Appel une service de changement d'etat des sorties
 
         return $this->render('sortie/list.html.twig', ['sorties' => $sorties]);
     }
@@ -108,10 +95,12 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/inscription/{id}", name="sortie_inscription")
      */
-    public function inscription(EntityManagerInterface $entityManager, SortieRepository $sortieRepository, int $id): Response
+    public function inscription(EntityManagerInterface $entityManager, SortieRepository $sortieRepository, ParticipantRepository $participantRepository, int $id): Response
     {
         $sortie = $sortieRepository->find($id);
-        $participant = $this->getUser();
+
+        $email = $this->getUser()->getUsername();
+        $participant = $participantRepository->findOneByEmail($email);
 
         if (!$sortie) {
             throw $this->createNotFoundException('Sortie non trouvée !');
@@ -122,9 +111,9 @@ class SortieController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash(
-                        'success',
-                        'Vous été bien enregistre dans la sortie ! Merci beaucoup.'
-                    );
+                'success',
+                'Vous été bien enregistre dans la sortie ! Merci beaucoup.'
+            );
 
         return $this->render('sortie/details.html.twig', ['sortie' => $sortie]);
     }
@@ -132,10 +121,12 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/desister/{id}", name="sortie_desister")
      */
-    public function desister(EntityManagerInterface $entityManager, SortieRepository $sortieRepository, int $id): Response
+    public function desister(EntityManagerInterface $entityManager, SortieRepository $sortieRepository, ParticipantRepository $participantRepository, int $id): Response
     {
         $sortie = $sortieRepository->find($id);
-        $participant = $this->getUser();
+        $email = $this->getUser()->getUsername();
+
+        $participant = $participantRepository->findOneByEmail($email);
 
         if (!$sortie) {
             throw $this->createNotFoundException('Sortie non trouvée !');
@@ -147,9 +138,9 @@ class SortieController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash(
-                        'success',
-                        'Vous été bien desisncrit de la sortie ! Merci beaucoup.'
-                    );
+                'success',
+                'Vous été bien desisncrit de la sortie ! Merci beaucoup.'
+            );
 
         return $this->render('sortie/details.html.twig', ['sortie' => $sortie]);
     }
@@ -157,10 +148,15 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/publier/{id}", name="sortie_publier")
      */
-    public function publier(EntityManagerInterface $entityManager, SortieRepository $sortieRepository, EtatRepository $etatRepository, int $id): Response
+    public function publier(EntityManagerInterface $entityManager, SortieRepository $sortieRepository, EtatRepository $etatRepository, ParticipantRepository $participantRepository, int $id, AuthorizationCheckerInterface $authorizationChecker): Response
     {
         $sortie = $sortieRepository->find($id);
-        $organisateur = $this->getUser();
+
+        $email = $this->getUser()->getUsername();
+
+        $organisateur = $participantRepository->findOneByEmail($email);
+
+        $this->denyAccessUnlessGranted('sortie_publier', $sortie);
 
         if (!$sortie) {
             throw $this->createNotFoundException('Sortie non trouvée !');
@@ -183,47 +179,43 @@ class SortieController extends AbstractController
         return $this->render('sortie/details.html.twig', ['sortie' => $sortie]);
     }
 
-
     /**
-     * @Route("/annule/{id}", name="annule")
-     * @param int $id
-     * @param SortieRepository $sortieRepository
-     * @param Request $request
-     * @param $entityManager
-     * @return Response
+     * @Route("/annule/{id}", name="sortie_annuler")
      *
+     * @param $entityManager
+     *
+     * @return Response
      */
-    public function annule(int              $id,
+    public function annule(int $id,
                            SortieRepository $sortieRepository,
-                           Request          $request,
-                           EntityManagerInterface $entityManager
-    ): Response
-    {
-        $id=1;
-        $sortie = $sortieRepository ->findOneBySomeField($id);
+                           Request $request,
+                           EntityManagerInterface $entityManager,
+                           EtatRepository $etatRepository
+    ): Response {
+        $sortie = $sortieRepository->findOneBySomeField($id);
 
-
-        $annulForm=$this->createForm(AnnulSortieType::class, $sortie);
+        $annulForm = $this->createForm(AnnulSortieType::class, $sortie);
 
         //traitement du formulaire
         $annulForm->handleRequest($request);
 
-        if($annulForm ->isSubmitted() ){
-
+        if ($annulForm->isSubmitted()) {
+            $etat = $etatRepository->findOneBy(['libelle' => 'Annulée']);
+            $sortie->setEtat($etat);
             //message flash pour annoncer la bonne exécution de l'annulation
-            $this->addFlash('success','la sortie a été annulée');
+            $this->addFlash('success', 'la sortie a été annulée');
 
             //envoi des données à la BD pour modifier le champs infosSortie
-            $entityManager -> persist($sortie);
-            $entityManager -> flush();
+            $entityManager->persist($sortie);
+            $entityManager->flush();
 
             //redirection vers la page d'accueil
             return $this->redirectToRoute('main_home');
         }
 
         return $this->render('sortie/annule.html.twig', [
-            "sortie" => $sortie,
-            "annulForm" => $annulForm->createView()
+            'sortie' => $sortie,
+            'annulForm' => $annulForm->createView(),
         ]);
     }
 }
