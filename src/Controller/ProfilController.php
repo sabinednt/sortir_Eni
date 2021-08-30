@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,20 +14,16 @@ use Doctrine\ORM\EntityManagerInterface;
 
 Class ProfilController extends AbstractController{
     /**
-     * @Route("/profil", name="profil")
+     * @Route("/profiles/profileModif", name="profile_modif")
      */
-    public function profil(Request $request, EntityManagerInterface $entityManager, ParticipantRepository $participantRepository): Response
+    public function profileModif(Request $request, EntityManagerInterface $entityManager, ParticipantRepository $participantRepository): Response
     {
 
-        // Récupération des informations de l'utilisateur
+        // Get user informations
 
-        
-        $id = '3';
+        $participant = $this->getUser();
 
-        $participant = $participantRepository->find($id);
-
-
-        // Formulaire pour modifier le profil
+        // Form for change the profile
         
         $participantForm = $this->createForm(ProfilType::class, $participant);
 
@@ -38,10 +35,21 @@ Class ProfilController extends AbstractController{
             $entityManager->flush();
         }
 
-
-        return $this->render('profil.html.twig', [
+        return $this->render('profiles/profileModif.html.twig', [
             'participant' => $participant, 'participantForm' => $participantForm->createView()
         ]);
 
+    }
+
+    /**
+     * @Route("/profiles/profileDisplay/{pseudo}", name="profile_display")
+     */
+    public function profileDisplay(ParticipantRepository $participantRepository, String $pseudo){
+       
+    
+        $utilisateur = $participantRepository->findOneByPseudo($pseudo);
+
+        return $this->render('profiles/profileDisplay.html.twig', [
+            'utilisateur' => $utilisateur ]);
     }
 }

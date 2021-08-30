@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid text-center"  id="background-profile">
+
+        <div class="row justify-content-around">
+            <div class="col-lg-3">
+                <img class="img-fluid photo-profil" src="{{ utilisateur.fichier }}" alt="Photo de profil">
+            </div>
+
+            <div class="col-lg-6">
+                <h2>{{utilisateur.pseudo}}</h2>
+
+                    <p>Prénom : {{utilisateur.prenom}}</p>
+                    <p>Nom : {{utilisateur.nom}}</p>
+                    <p>Téléphone : {{utilisateur.telephone}}</p>
+                    <p>Email : {{utilisateur.email}}</p>
+                    <p>Campus : {{utilisateur.campus.getNom()}}</p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

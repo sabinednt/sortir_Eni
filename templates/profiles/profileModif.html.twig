@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+
+    <div class= "container-fluid text-center" id="background-profile-modif">
+
+        <div class="row justify-content-around">
+            <div class="col-lg-3">
+                <img class="img-fluid" src="{{ participant.fichier }}" alt="Photo de profil">
+            </div>
+
+            <div class="col-lg-6">
+                <h2>Mon profil</h2>
+                    {{ form_start(participantForm) }}
+                    {{ form_widget(participantForm) }}
+
+                    <div>
+                        <button>Enregistrer</button>
+
+                        {{ form_end(participantForm) }}
+
+                        <button><a href="{{ path('main_home') }}" title="Annuler">Annuler</a></button>
+                    </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
