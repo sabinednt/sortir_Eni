@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9  col-lg-10 mx-auto">
+            <div id="sortie-card" class=" border-0 shadow rounded-3 my-5 ">
+                <div class="card-body p-4 p-sm-5">
+                    <h3 class="card-title text-center mb-5 fw-bold fs-3" style="color: #0d6efd" >Annuler une sortie</h3>
+                    <table class="table table-hover">
+
+                        <tbody>
+                        <tr class="table-primary">
+                            <th scope="row">Nom de la sortie :</th>
+                            <td>{{ sortie.nom }}</td>
+                         </tr>
+                        <tr class="table-secondary">
+                            <th scope="row">Date de la sortie :</th>
+                            <td>{{ sortie.dateHeureDebut | date("d/m/Y") }}</td>
+                        </tr>
+                        <tr class="table-success">
+                            <th scope="row">Campus : </th>
+                            <td>{{ sortie.campus.nom }}</td>
+                        </tr>
+                        <tr class="table-info">
+                            <th scope="row">Lieu : </th>
+                            <td>{{ sortie.lieu.nom }} {{ sortie.lieu.rue }} {{ sortie.lieu.ville.codePostal}} {{ sortie.lieu.ville.nom}}</td>
+                        </tr>
+                        <tr class="table-light">
+                            <th scope="row">Motif de l'annulation :  </th>
+                            <td>
+                            {{ form_start(annulForm) }}
+                            {{ form_widget(annulForm.infosSortie) }}
+                            </td>
+                        </tr>
+                        <tr>
+                        <th scope="row"> </th>
+                        <td>
+                            <button type="submit" id="enregistrer" class="btn btn-primary btn-lg">Enregistrer</button> &nbsp;
+                            <button type="reset" id="annuler" class="btn btn-primary btn-lg">Annuler</button>
+                            </td>
+                            {{ form_end(annulForm)}}
+
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    {% include('sortie/messagesInfosModale.html.twig') %}
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+
