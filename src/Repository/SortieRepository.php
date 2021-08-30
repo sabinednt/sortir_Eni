@@ -20,26 +20,38 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
-  /*  public function findSortieForAnnul($id){
-  $qb = $this->createQueryBuilder('sortie');
+    public function findSorties(): Paginator
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('s')
+            ->select('s, p')
+            ->leftJoin('s.organisateur', 'p')
+        ;
 
-    //jointure avec l'entité Campus
-    $qb ->join('sortie.campus', 'camp');
-    $qb->addSelect('camp');
-    $qb->where('sortie.id=:id');
-    $qb->setParameter('id',$id);
+        $query = $queryBuilder->getQuery();
+        $query->setMaxResults(50);
 
-   // $qb->leftJoin('sortie.lieu', '')
-   //     ->addSelect('lieu');
-    $qb ->setMaxResults(10);
-    $query=$qb->getQuery();
+        $paginator = new Paginator($query);
 
+        return $paginator;
+    }
 
- //   $paginator=new Paginator($query);
-    return $query->getResult();
-
-    }*/
-
+    // /**
+    //  * @return Sortie[] Returns an array of Sortie objects
+    //  */
+    /*
+    public function findByExampleField($value)
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.exampleField = :val')
+            ->setParameter('val', $value)
+            ->orderBy('s.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    */
 
 
     public function findOneBySomeField($id)

@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sortie Liste ! | {{ parent() }} {% endblock %}
+
+{% block body %}
+
+<div id="list-sorties-card" class="p-5">
+    <h2>Sorties</h2>
+
+    <table class="table table-responsive">
+        <tr>
+            <th>Nom de la sortie</th>
+            <th>Date de la sortie</th>
+            <th>Clôture</th>
+            <th>inscrits / places</th>
+            <th>Eta</th>
+            <th>Inscrit</th>
+            <th>Organisateur</th>
+            <th>Actions</th>
+        </tr>
+        {% for sortie in sorties %}
+        <tr>
+            {% if app.user in sortie.participants and sortie.etat.libelle in ['Ouverte', 'Fermé'] or app.user is same as sortie.organisateur or app.user.administrateur %}
+                <td>{{ sortie.nom }}</td>
+                <td>{{ sortie.dateHeureDebut|date('d/m/Y') }}</td>
+                <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
+                <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax}}</td>
+                <td>{{ sortie.etat.libelle }}</td>
+                <td> {{ app.user in sortie.participants ? "X" : "" }} </td>
+                <td> {{ sortie.organisateur.pseudo }} </td>
+                <td>
+                    {% if sortie.etat.libelle in ['Activité en cours', 'Ouverte', 'Fermé'] %}
+                        <a href="{{ path('sortie_details', {'id': sortie.id}) }}" title="Voir le detaille de la sortie">Afficher</a>
+                        <!-- {{ dump(sortie.etat.libelle) }}{{ dump(sortie.organisateur) }}{{ dump(app.user) }} -->
+                    {% endif %}
+                    {% if app.user in sortie.participants and sortie.etat.libelle in ['Ouverte', 'Fermé'] %}
+                        - <a href="{{ path('sortie_desister', {'id': sortie.id}) }}" title="Se désister">Se désister</a>
+                    {% elseif app.user not in sortie.participants and app.user is not same as sortie.organisateur and sortie.etat.libelle in ['Ouverte'] %}
+                        - <a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" title="S'inscrire">S'inscrire</a>
+                    {% elseif app.user is same as sortie.organisateur and sortie.etat.libelle in ['Créée'] %}
+                        <a href="{{ path('sortie_details', {'id': sortie.id}) }}" title="Modifier">Modifier</a> - <a href="{{ path('sortie_publier', {'id': sortie.id}) }}" title="Publier">Publier</a>
+                    {% elseif app.user is same as sortie.organisateur and sortie.etat.libelle in ['Ouverte'] %}
+                    - <a href="{{ path('sortie_details', {'id': sortie.id}) }}" title="Annuler">Annuler</a>
+                    {% endif %}
+                </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

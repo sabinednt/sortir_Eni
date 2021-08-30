@@ -73,7 +73,7 @@ class Participant implements UserInterface
     private $campus;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Sortie::class, inversedBy="participants")
+     * @ORM\ManyToMany(targetEntity=Sortie::class, inversedBy="participants", cascade={"persist"})
      */
     private $sorties;
 
