@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,32 +20,42 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
-    // /**
-    //  * @return Sortie[] Returns an array of Sortie objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+  /*  public function findSortieForAnnul($id){
+  $qb = $this->createQueryBuilder('sortie');
 
-    /*
-    public function findOneBySomeField($value): ?Sortie
+    //jointure avec l'entité Campus
+    $qb ->join('sortie.campus', 'camp');
+    $qb->addSelect('camp');
+    $qb->where('sortie.id=:id');
+    $qb->setParameter('id',$id);
+
+   // $qb->leftJoin('sortie.lieu', '')
+   //     ->addSelect('lieu');
+    $qb ->setMaxResults(10);
+    $query=$qb->getQuery();
+
+
+ //   $paginator=new Paginator($query);
+    return $query->getResult();
+
+    }*/
+
+
+
+    public function findOneBySomeField($id)
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
+        return $this->createQueryBuilder('sortie')
+            ->andWhere('sortie.id = :id')
+            ->setParameter('id', $id)
+            ->join('sortie.campus','camp')
+            ->addSelect('camp')
+            ->join('sortie.lieu', 'l')
+            ->addSelect('l')
+            ->join('l.ville','ville')
+            ->addSelect('ville')
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+
 }

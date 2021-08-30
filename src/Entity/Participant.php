@@ -123,6 +123,11 @@ class Participant implements UserInterface
         return $this->administrateur ? ['ROLE_ADMIN'] : ['ROLE_USER'];
     }
 
+    public function isGranted($role)
+    {
+        return in_array($role, $this->getRoles());
+    }
+
     /**
      * @see UserInterface
      */
