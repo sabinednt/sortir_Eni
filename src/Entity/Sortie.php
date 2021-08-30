@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -205,6 +206,18 @@ class Sortie
     public function getParticipants(): Collection
     {
         return $this->participants;
+    }
+
+    public function getParticipant(string $email): ?Participant
+    {
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('email', $email))
+            ->setMaxResults(1)
+        ;
+
+        $participant = $this->participants->matching($criteria);
+
+        return $participant->isEmpty() ? null : $participant->first();
     }
 
     public function addParticipant(Participant $participant): self
