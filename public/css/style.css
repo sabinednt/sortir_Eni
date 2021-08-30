@@ -86,4 +86,17 @@
 
 .infoSortie {
   height: 8em !important;
+label{
+    display: block;
+}
+#background-profile{
+    background-color: rgba(245,245,245,0.75);
+    padding: 30px;
+}
+#background-profile-modif{
+    background-color: rgba(245,245,245,0.75);
+    padding: 30px;
+}
+.photo-profil{
+    border-radius: 5%;
 }
