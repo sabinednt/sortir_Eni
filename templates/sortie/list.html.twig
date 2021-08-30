@@ -20,21 +20,23 @@
         </tr>
         {% for sortie in sorties %}
         <tr>
-                <td>{{ sortie.nom }}</td>
-                <td>{{ sortie.dateHeureDebut|date('d/m/Y') }}</td>
-                <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
-                <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax}}</td>
-                <td>{{ sortie.etat.libelle }}</td>
-                <td> {{ app.user in sortie.participants ? "X" : "" }} </td>
-                <td><a href="#" title="Profile">{{ sortie.organisateur.pseudo }}</a></td>
-                <td>
-                    {% if is_granted('sortie_annuler', sortie) %} <a href="#">Annuler</a> {% endif %}
-                    {% if is_granted('sortie_afficher', sortie) %} <a href="{{ path('sortie_details', {'id': sortie.id}) }}" title="Afficher">Afficher</a> {% endif %}
-                    {% if is_granted('sortie_publier', sortie) %} <a href="{{ path('sortie_publier', {'id': sortie.id}) }}" title="Publier">Publier</a> {% endif %}
-                    {% if is_granted('sortie_desister', sortie) %} <a href="{{ path('sortie_desister', {'id': sortie.id}) }}" title="Se désister">Se désister</a> {% endif %}
-                    {% if is_granted('sortie_inscription', sortie) %} <a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" title="S'inscrire">S'inscrire {% endif %}
-                    {% if is_granted('sortie_modifier', sortie) %} <a href="#" title="Modiffier">Modiffier {% endif %}
-                </td>
+                {% if sortie.etat.libelle != 'Annulée' or is_granted("ROLE_ADMIN") %}
+                    <td>{{ sortie.nom }}</td>
+                    <td>{{ sortie.dateHeureDebut|date('d/m/Y') }}</td>
+                    <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
+                    <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax}}</td>
+                    <td>{{ sortie.etat.libelle }}</td>
+                    <td> {{ app.user in sortie.participants ? "X" : "" }} </td>
+                    <td><a href="#" title="Profile">{{ sortie.organisateur.pseudo }}</a></td>
+                    <td>
+                        {% if is_granted('sortie_annuler', sortie) %} <a href="{{ path('sortie_annuler', {'id': sortie.id}) }}" title="Annuler">Annuler</a> {% endif %}
+                        {% if is_granted('sortie_afficher', sortie) %} <a href="{{ path('sortie_details', {'id': sortie.id}) }}" title="Afficher">Afficher</a> {% endif %}
+                        {% if is_granted('sortie_publier', sortie) %} <a href="{{ path('sortie_publier', {'id': sortie.id}) }}" title="Publier">Publier</a> {% endif %}
+                        {% if is_granted('sortie_desister', sortie) %} <a href="{{ path('sortie_desister', {'id': sortie.id}) }}" title="Se désister">Se désister</a> {% endif %}
+                        {% if is_granted('sortie_inscription', sortie) %} <a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" title="S'inscrire">S'inscrire {% endif %}
+                        {% if is_granted('sortie_modifier', sortie) %} <a href="#" title="Modiffier">Modiffier {% endif %}
+                    </td>
+                {% endif %}
         </tr>
         {% endfor %}
     </table>

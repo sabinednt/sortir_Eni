@@ -73,6 +73,8 @@ class SortieController extends AbstractController
         // $sorties = $sortieRepository->findSorties();
         $sorties = $sortieRepository->findAll();
 
+        // Appel une service de changement d'etat des sorties
+
         return $this->render('sortie/list.html.twig', ['sorties' => $sorties]);
     }
 
@@ -187,7 +189,8 @@ class SortieController extends AbstractController
     public function annule(int $id,
                            SortieRepository $sortieRepository,
                            Request $request,
-                           EntityManagerInterface $entityManager
+                           EntityManagerInterface $entityManager,
+                           EtatRepository $etatRepository
     ): Response {
         $sortie = $sortieRepository->findOneBySomeField($id);
 
@@ -197,6 +200,8 @@ class SortieController extends AbstractController
         $annulForm->handleRequest($request);
 
         if ($annulForm->isSubmitted()) {
+            $etat = $etatRepository->findOneBy(['libelle' => 'Annulée']);
+            $sortie->setEtat($etat);
             //message flash pour annoncer la bonne exécution de l'annulation
             $this->addFlash('success', 'la sortie a été annulée');
 
