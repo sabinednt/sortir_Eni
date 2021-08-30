@@ -27,7 +27,7 @@
                     <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax}}</td>
                     <td>{{ sortie.etat.libelle }}</td>
                     <td> {{ app.user in sortie.participants ? "X" : "" }} </td>
-                    <td><a href="#" title="Profile">{{ sortie.organisateur.pseudo }}</a></td>
+                    <td><a href="{{ path('profile_display', {'pseudo': sortie.organisateur.pseudo}) }}" title="Profile">{{ sortie.organisateur.pseudo }}</a></td>
                     <td>
                         {% if is_granted('sortie_annuler', sortie) %} <a href="{{ path('sortie_annuler', {'id': sortie.id}) }}" title="Annuler">Annuler</a> {% endif %}
                         {% if is_granted('sortie_afficher', sortie) %} <a href="{{ path('sortie_details', {'id': sortie.id}) }}" title="Afficher">Afficher</a> {% endif %}
