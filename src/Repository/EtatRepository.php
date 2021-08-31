@@ -36,15 +36,13 @@ class EtatRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?Etat
+    public function findOneByLibelle($libelle): ?Etat
     {
         return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('e.libelle = :libelle')
+            ->setParameter('libelle', $libelle)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
 }
