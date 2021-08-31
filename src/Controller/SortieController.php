@@ -74,6 +74,8 @@ class SortieController extends AbstractController
         // $sorties = $sortieRepository->findSorties();
         $sorties = $sortieRepository->findAll();
         $sorties = $clotureSortieService->updateEtatByDateSortie($sorties);
+
+        $sorties = $clotureSortieService->sortiesToDisplay($sorties);
         // Appel une service de changement d'etat des sorties
 
         return $this->render('sortie/list.html.twig', ['sorties' => $sorties]);

@@ -34,4 +34,28 @@ class ClotureSortieService
 
         return false;
     }
+
+    public function isLessThanOneMonth(Sortie $sortie): bool
+    {
+        $origin = $sortie->getDateHeureDebut();
+        $today = new \DateTime('now');
+        $interval = $origin->diff($today)->format('%R%a');
+
+        if ($interval<31){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function sortiesToDisplay(array $sorties): array
+    {
+        foreach ($sorties as $sortie) {
+            if ($this->isLessThanOneMonth($sortie)){
+                $sortiesNotArchived[] = $sortie;
+            }
+        }
+        return $sortiesNotArchived;
+    }
+
 }
