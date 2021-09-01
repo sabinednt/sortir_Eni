@@ -1,23 +1,177 @@
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Create une nouvelle Sortie !{% endblock %}
 
 {% block body %}
-{# <div>
+    {# <div>
     {{ form_start(sortieForm) }}
     {{ form_widget(sortieForm) }}
     <button type="submit">Create sortie!</button>
     {{ form_end(sortieForm) }}
 </div> #}
+
+
+    <div class="container">
+        <div id="sortie-card" class=" border-0 shadow rounded-3 my-3 ">
+            <div class="card-body p-4 p-sm-3">
+
+                <!-- titre du formulaire-->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-header bg-primary" style="text-align: center">
+                            <h1>Créer une sortie</h1>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row p-sm-3">
+
+                    <!-- partie gauche du formulaire-->
+                    <div class="col-lg-6">
+                        <div class="bs-component">
+                            <table class="table">
+
+                                <tr class="table">
+                                    {{ form_start(sortieForm) }}
+                                    <th scope="row">Nom de la sortie :  </th>
+                                    <td>
+                                        {{ form_widget(sortieForm.nom) }}
+                                    </td>
+                                </tr>
+
+                                <tr class="table">
+                                    <th scope="row">Date et heure de la sortie :  </th>
+                                    <td>
+                                        {{ form_widget(sortieForm.dateHeureDebut) }}
+                                    </td>
+                                </tr>
+
+                                <tr class="table">
+                                    <th scope="row">Date limite d'inscription :  </th>
+                                    <td>
+                                        {{ form_widget(sortieForm.dateLimiteInscription) }}
+                                    </td>
+                                </tr>
+
+                                <tr class="table">
+                                    <th scope="row">Nombre de places :  </th>
+                                    <td>
+                                        {{ form_widget(sortieForm.nbInscriptionsMax) }}
+                                    </td>
+                                </tr>
+
+                                <tr class="table">
+                                    <th scope="row">Durée :  </th>
+                                    <td>
+                                        {{ form_widget(sortieForm.duree) }}
+                                    </td>
+                                </tr>
+
+                                <tr class="table">
+                                    <th scope="row">Description et infos :  </th>
+                                    <td>
+                                        {{ form_widget(sortieForm.infosSortie) }}
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <!--partie de droite du formulaire-->
+
+                    <div class="col-lg-4 offset-lg-1">
+
+                        <table class="table">
+                            <tbody>
+
+                            <tr class="table">
+                                <th scope="row">Campus :  </th>
+                                <td>
+                                    {{ form_widget(sortieForm.campus) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">Ville :  </th>
+                                <td>
+                                    {{form_widget(sortieForm.lieu.ville.nom) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">lieu :  </th>
+                                <td>
+                                    {{form_widget(sortieForm.lieu.nom) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">Rue :  </th>
+                                <td>
+                                    {{form_widget(sortieForm.lieu.rue) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">Code Postal :  </th>
+                                <td>
+                                    {{form_widget(sortieForm.lieu.ville.code_postal) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">Latitude :  </th>
+                                <td>
+                                    {{form_widget(sortieForm.lieu.latitude) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">Longitude :  </th>
+                                <td>
+                                    {{form_widget(sortieForm.lieu.longitude) }}
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- le partie boutons-->
+
+                <div class="col-lg-12 text-center">
+
+                    {{ form_widget(sortieForm.save)}} &nbsp;
+                    {{ form_widget(sortieForm.saveAndPublish)}} &nbsp;
+                    <button class="btn btn-primary btn-lg">Annuler</button>
+
+                </div>
+
+                {{ form_end(sortieForm) }}
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!--
 <div class="container">
     <div class="row">
         <div class="col-xs-12">
-            {{ form_start(sortieForm) }}
+         {#    {{ form_start(sortieForm) }}
                 {{ form_widget(sortieForm) }}
                 <a href="{{ path('sortie_list') }}" title="Annuler">Annuler</a>
-            {{ form_end(sortieForm) }}
+            {{ form_end(sortieForm) }}#}
         </div>
     </div>
-</div>
+</div>-->
 
 {% endblock %}
+

@@ -1,44 +1,42 @@
-<nav class="navbar navbar-expand-lg ">
-
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ path('main_home') }}">
-            <img src="{{ asset('img/logo-sortirCom-bkk.png') }}">
-        </a>
+        <a class="navbar-brand" href="#"><img src="{{ asset('img/logo-sortirCom-white.png') }}"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-     {% if app.user %}
-        <div class="collapse navbar-collapse" id="navbarColor01">
-            <ul class="navbar-nav ms-auto">
-                {% if is_granted("ROLE_ADMIN") %}
+        {% if app.user %}
+            <div class="collapse navbar-collapse" id="navbarColor01" >
+                <ul class="navbar-nav">
+
+                    <!-- lien visible que par l'administrateur-->
+                    {% if is_granted("ROLE_ADMIN") %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Ville</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Campus</a>
+                        </li>
+                    {% endif %}
+
+                    <!-- lien visible que par l'utilisateur authentifié-->
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Ville
-                            <span class="visually-hidden">(current)</span>
-                        </a>
+                        <a class="nav-link" href="{{ path('sortie_list') }}">Accueil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Campus</a>
+                        <a class="nav-link" href="{{ path('sortie_create') }}">Créer une sortie</a>
                     </li>
-                {% endif %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('sortie_create') }}">Create une Sortie</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('sortie_list') }}">Lister les Sorties</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('main_home') }}">Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('profile_modif') }}">Mon Profil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_logout') }}">Se Déconnecter</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Bienvenue {{ app.user.pseudo }}</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('profile_modif') }}">Mon profil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
+                    </li>
 
-                </li>
-            </ul>
-        </div>
-      {% endif %}
+                </ul>
+
+            </div>
+        {% endif %}
     </div>
 </nav>
