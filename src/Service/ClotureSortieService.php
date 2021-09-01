@@ -41,7 +41,7 @@ class ClotureSortieService
         $today = new \DateTime('now');
         $interval = $origin->diff($today)->format('%R%a');
 
-        if ($interval<31){
+        if ($interval < 31) {
             return true;
         }
 
@@ -53,11 +53,11 @@ class ClotureSortieService
         $sortiesNotArchived = [];
 
         foreach ($sorties as $sortie) {
-            if ($this->isLessThanOneMonth($sortie)){
+            if ($this->isLessThanOneMonth($sortie)) {
                 $sortiesNotArchived[] = $sortie;
             }
         }
+
         return $sortiesNotArchived;
     }
-
 }

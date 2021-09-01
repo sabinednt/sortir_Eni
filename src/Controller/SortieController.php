@@ -8,11 +8,13 @@ use App\Form\AnnulSortieType;
 use App\Form\SearchType;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
+use App\Repository\LieuRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use App\Service\ClotureSortieService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -235,5 +237,37 @@ class SortieController extends AbstractController
             'sortie' => $sortie,
             'annulForm' => $annulForm->createView(),
         ]);
+    }
+
+    /**
+     * Returns a JSON string with the lieus of the Ville with the providen id.
+     *
+     * @Route("/sortie/lieux-ville", name="sortie_lieux_ville")
+     *
+     * @return JsonResponse
+     */
+    public function listeLieuxByVilleAction(Request $request, LieuRepository $lieuRepository)
+    {
+        // Rechercher les lieux qui appartiennent à la ville avec l’id donné comme paramètre GET "ville_id"
+        $villeId = $request->query->get('ville_id');
+
+        $lieux = $lieuRepository->findById($villeId);
+
+        // Serialize into an array the data that we need, in this case only name and id
+        // Note: you can use a serializer as well, for explanation purposes, we'll do it manually
+        $responseArray = [];
+        foreach ($lieux as $lieu) {
+            $responseArray[] = [
+                'id' => $lieu->getId(),
+                'nom' => $lieu->getNom(),
+                'rue' => $lieu->getRue(),
+                'latitude' => $lieu->getLatitude(),
+                'longitude' => $lieu->getLongitude(),
+                'code_postal' => $lieu->getVille()->getCodePostal(),
+            ];
+        }
+
+        // Return array with structure of the lieu of the providen city id
+        return new JsonResponse($responseArray);
     }
 }
