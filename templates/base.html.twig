@@ -6,8 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>{% block title %}Sortir.com{% endblock %}</title>
 
-
-       <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" >
+        <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" >
         <link rel="stylesheet" href="{{ asset('css/style.css') }}" >
         <link rel="stylesheet" href="{{ asset('css/normalize.css') }}" >
     </head>
@@ -29,7 +28,9 @@
 
 
         <main>
-        {% block body %}{% endblock %}
+        {% block body %}
+
+        {% endblock %}
         </main>
 
     </body>
