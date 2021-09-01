@@ -8,6 +8,7 @@ use App\Form\SortieType;
 use App\Repository\EtatRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
+use App\Service\ClotureSortieService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,13 +67,15 @@ class SortieController extends AbstractController
     /**
      * @Route("/sorties", name="sortie_list")
      */
-    public function list(SortieRepository $sortieRepository): Response
+    public function list(SortieRepository $sortieRepository, ClotureSortieService $clotureSortieService): Response
     {
         // $series = $sortieRepository->findAll();
         // $series = $sortieRepository->findBy([], ['nom' => 'DESC', 'dateLimiteInscription' => 'DESC'], 30);
         // $sorties = $sortieRepository->findSorties();
         $sorties = $sortieRepository->findAll();
+        $sorties = $clotureSortieService->updateEtatByDateSortie($sorties);
 
+        $sorties = $clotureSortieService->sortiesToDisplay($sorties);
         // Appel une service de changement d'etat des sorties
 
         return $this->render('sortie/list.html.twig', ['sorties' => $sorties]);

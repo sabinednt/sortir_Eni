@@ -107,7 +107,7 @@ class SortieVoter extends Voter
     {
         $participant = $this->getParticipantByUser($user);
 
-        return ($sortie->getParticipant($user->getUsername()) === $participant) && in_array($sortie->getEtat()->getLibelle(), ['Ouverte', 'Fermé']) || $this->security->isGranted('ROLE_ADMIN');
+        return ($sortie->getParticipant($user->getUsername()) === $participant) && in_array($sortie->getEtat()->getLibelle(), ['Ouverte', 'Fermé']) || ($this->security->isGranted('ROLE_ADMIN') && $sortie->getParticipant($user->getUsername()) === $participant);
     }
 
     /** * On vérifie si le participant peux il modifier une sortie. */
