@@ -11,6 +11,9 @@ use App\Entity\Participant;
 use App\Form\ProfilType;
 use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 Class ProfilController extends AbstractController{
     /**
@@ -30,6 +33,24 @@ Class ProfilController extends AbstractController{
         $participantForm->handleRequest($request);
 
         if ($participantForm->isSubmitted()){
+
+            $profilePicture = $participantForm->get('fichier')->getData();
+
+            if($profilePicture){
+                
+                $originalFilename = pathinfo($profilePicture->getClientOriginalName(), PATHINFO_FILENAME);
+
+                $newFilename = $originalFilename.'-'.uniqid().'.'.$profilePicture->guessExtension();
+
+
+
+                $destination = $this->getParameter('kernel.project_dir').'/public/uploads';
+                $profilePicture->move($destination, $newFilename);
+
+                $participant->setFichier('uploads/'.$newFilename);
+
+
+            }
 
             $entityManager->persist($participant);
             $entityManager->flush();

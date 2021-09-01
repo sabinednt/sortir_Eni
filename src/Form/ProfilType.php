@@ -7,11 +7,12 @@ use App\Entity\Participant;
 use Doctrine\DBAL\Types\StringType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-
+use Symfony\Component\Validator\Constraints\File;
 
 class ProfilType extends AbstractType
 {
@@ -31,7 +32,19 @@ class ProfilType extends AbstractType
             'first_options'  => ['label' => 'Mot de passe : '],
             'second_options' => ['label' => 'Confirmation : '],
         ])
-            ->add('fichier')
+            ->add('fichier', FileType::class, [
+                'data_class' => null,
+                'label' => 'Photo de profil',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => 'image/jpeg',
+                        'mimeTypesMessage' => 'Votre photo doit être en .jpeg et ne pas dépasser 1 megaoctet'
+                    ])
+                ]
+            ])
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'nom',
