@@ -16,9 +16,10 @@ class ClotureSortieService
 
     public function updateEtatByDateSortie(array $sorties): array
     {
+        $etat = $this->etatRepository->findOneByLibelle('Clôturée');
+
         foreach ($sorties as $sortie) {
             if ($this->dateSortieExpired($sortie)) {
-                $etat = $this->etatRepository->findOneByLibelle('Clôturée');
                 $sortie->setEtat($etat);
             }
         }
