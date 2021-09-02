@@ -3,43 +3,125 @@
 {% block title %}Sortie Liste ! | {{ parent() }} {% endblock %}
 
 {% block body %}
+<div class="container">
+    <div id="sortie-card" class="border-0 shadow rounded-3 my-3">
+        <div class="card-body">
 
-<div id="list-sorties-card" class="p-5">
-    <h2>Sorties</h2>
+            <!--Partir titre et bienvenu personnalisé-->
+            <div class="row">
+                <div class="col-lg-5 ">
+                <h4 class="text-primary align-bottom">Filtres</h4>
+                </div>
+                <div class="col-lg-7">
+                <h3 class="text-primary" style="text-align: right">Bienvenu(e) {{ app.user.nom }}</h3>
+                <h6 class="text-secondary" style="text-align: right">Date du jour : {{ "now"|date("d/m/Y") }}</h6>
+                </div>
+            </div>
+            {{ form_start(searchForm) }}
+            <div class="row p-sm-3">
+            <!--partie de gauche du filtre de recherche-->
 
-    <table class="table table-responsive">
-        <tr>
-            <th>Nom de la sortie</th>
-            <th>Date de la sortie</th>
-            <th>Clôture</th>
-            <th>inscrits / places</th>
-            <th>Eta</th>
-            <th>Inscrit</th>
-            <th>Organisateur</th>
-            <th>Actions</th>
-        </tr>
-        {% for sortie in sorties %}
-        <tr>
-                {% if sortie.etat.libelle != 'Annulée' or is_granted("ROLE_ADMIN") %}
-                    <td>{{ sortie.nom }}</td>
-                    <td>{{ sortie.dateHeureDebut|date('d/m/Y') }}</td>
-                    <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
-                    <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax}}</td>
-                    <td>{{ sortie.etat.libelle }}</td>
-                    <td> {{ app.user in sortie.participants ? "X" : "" }} </td>
-                    <td><a href="{{ path('profile_display', {'pseudo': sortie.organisateur.pseudo}) }}" title="Profile">{{ sortie.organisateur.pseudo }}</a></td>
-                    <td>
-                        {% if is_granted('sortie_annuler', sortie) %} <a href="{{ path('sortie_annuler', {'id': sortie.id}) }}" title="Annuler">Annuler</a> {% endif %}
-                        {% if is_granted('sortie_afficher', sortie) %} <a href="{{ path('sortie_details', {'id': sortie.id}) }}" title="Afficher">Afficher</a> {% endif %}
-                        {% if is_granted('sortie_publier', sortie) %} <a href="{{ path('sortie_publier', {'id': sortie.id}) }}" title="Publier">Publier</a> {% endif %}
-                        {% if is_granted('sortie_desister', sortie) %} <a href="{{ path('sortie_desister', {'id': sortie.id}) }}" title="Se désister">Se désister</a> {% endif %}
-                        {% if is_granted('sortie_inscription', sortie) %} <a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" title="S'inscrire">S'inscrire {% endif %}
-                        {% if is_granted('sortie_modifier', sortie) %} <a href="#" title="Modiffier">Modiffier {% endif %}
-                    </td>
-                {% endif %}
-        </tr>
-        {% endfor %}
-    </table>
+                <div class="col-lg-6">
+                    <div class="row py-2">
+                       <div class="col-lg-5">
+                           Campus :
+                       </div>
+                        <div class="col-lg-6">
+                            {{ form_widget(searchForm.campus) }}
+                        </div>
+                    </div>
+
+                    <div class="row  py-2">
+                        <div class="col-lg-5">
+                            Entre le :
+                        </div>
+                        <div class="col-lg-6">
+                            {{ form_widget(searchForm.dateMin) }}
+                        </div>
+                    </div>
+
+                    <div class="row  py-2">
+                        <div class="col-lg-5">
+                            Et le :
+                        </div>
+                        <div class="col-lg-6">
+                            {{ form_widget(searchForm.dateMax) }}
+                        </div>
+                    </div>
+
+                    <div class="row  py-2">
+                        <div class="col-lg-5">
+                           Le nom de la sortie contient
+                        </div>
+                        <div class="col-lg-6">
+                            {{ form_widget(searchForm.q) }}
+                        </div>
+                    </div>
+                </div>
+
+            <!--partie du centre du formulaire de recherche-->
+                <div class="col-lg-4">
+
+                   <div> {{ form_widget(searchForm.organisateur) }} Sortie dont je suis l'organisateur(trice)</div>
+                   <div> {{ form_widget(searchForm.participant) }} Sortie auxquelles je suis inscrit(e)</div>
+                   <div> {{ form_widget(searchForm.nonParticipant) }} Sortie auxquelles je ne suis pas inscrit(e)</div>
+                   <div> {{ form_widget(searchForm.sortiesPassees) }} Sorties passées</div>
+
+                   <div class="py-lg-4">
+
+                       <button class="btn btn-lg btn-primary " type="submit">Filtrer les sorties</button>
+
+                   </div>
+                </div>
+            {{ form_end(searchForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--partie listant les sorties-->
+<div class="container">
+    <div id="list-sorties-card" class="border-0 shadow rounded-3 my-3">
+        <div class="card-body p-4 p-sm-3">
+            <h2>Sorties</h2>
+
+            <table class="table table-responsive">
+                <tr>
+                    <th>Nom de la sortie</th>
+                    <th>Date de la sortie</th>
+                    <th>Clôture</th>
+                    <th>inscrits / places</th>
+                    <th>Eta</th>
+                    <th>Inscrit</th>
+                    <th>Organisateur</th>
+                    <th>Actions</th>
+                </tr>
+                {% for sortie in sorties %}
+                <tr>
+                    {% if sortie.etat.libelle != 'Annulée' and is_granted('sortie_archived', sortie) or is_granted("ROLE_ADMIN") %}
+                            <td>{{ sortie.nom }}</td>
+                            <td>{{ sortie.dateHeureDebut|date('d/m/Y') }}</td>
+                            <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
+                            <td>{{ sortie.participants.count }} / {{ sortie.nbInscriptionsMax}}</td>
+                            <td>{{ sortie.etat.libelle }}</td>
+                            <td> {{ app.user in sortie.participants ? "X" : "" }} </td>
+                            <td><a href="{{ path('profile_display', {'pseudo': sortie.organisateur.pseudo}) }}" title="Profile">{{ sortie.organisateur.pseudo }}</a></td>
+                            <td>
+                                {% if is_granted('sortie_annuler', sortie) %} <a href="{{ path('sortie_annuler', {'id': sortie.id}) }}" title="Annuler">Annuler</a> {% endif %}
+                                {% if is_granted('sortie_afficher', sortie) %} <a href="{{ path('sortie_details', {'id': sortie.id}) }}" title="Afficher">Afficher</a> {% endif %}
+                                {% if is_granted('sortie_publier', sortie) %} <a href="{{ path('sortie_publier', {'id': sortie.id}) }}" title="Publier">Publier</a> {% endif %}
+                                {% if is_granted('sortie_desister', sortie) %} <a href="{{ path('sortie_desister', {'id': sortie.id}) }}" title="Se désister">Se désister</a> {% endif %}
+                                {% if is_granted('sortie_inscription', sortie) %} <a href="{{ path('sortie_inscription', {'id': sortie.id}) }}" title="S'inscrire">S'inscrire {% endif %}
+                                {% if is_granted('sortie_modifier', sortie) %} <a href="#" title="Modiffier">Modiffier {% endif %}
+                            </td>
+                        {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

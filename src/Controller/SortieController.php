@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Data\SearchData;
 use App\Entity\Sortie;
 use App\Form\AnnulSortieType;
+use App\Form\SearchType;
 use App\Form\SortieType;
 use App\Repository\EtatRepository;
 use App\Repository\ParticipantRepository;
@@ -67,18 +69,31 @@ class SortieController extends AbstractController
     /**
      * @Route("/sorties", name="sortie_list")
      */
-    public function list(SortieRepository $sortieRepository, ClotureSortieService $clotureSortieService): Response
+    public function list(SortieRepository $sortieRepository,
+                         ClotureSortieService $clotureSortieService,
+                         Request $request
+    ): Response
     {
         // $series = $sortieRepository->findAll();
         // $series = $sortieRepository->findBy([], ['nom' => 'DESC', 'dateLimiteInscription' => 'DESC'], 30);
         // $sorties = $sortieRepository->findSorties();
         $sorties = $sortieRepository->findAll();
-        $sorties = $clotureSortieService->updateEtatByDateSortie($sorties);
+        $sorties = $clotureSortieService->updateEtatByDateSortie((array)$sorties);
+      //  $sorties = $clotureSortieService->sortiesToDisplay($sorties);
 
-        $sorties = $clotureSortieService->sortiesToDisplay($sorties);
+        $data = new SearchData();
+        $searchForm = $this->createForm(SearchType::class, $data);
+        $searchForm->handleRequest($request);
+
+        $sorties = $sortieRepository->findSearch($data);
+
+
         // Appel une service de changement d'etat des sorties
 
-        return $this->render('sortie/list.html.twig', ['sorties' => $sorties]);
+        return $this->render('sortie/list.html.twig', [
+            'sorties' => $sorties,
+            'searchForm' => $searchForm->createView()
+        ]);
     }
 
     /**

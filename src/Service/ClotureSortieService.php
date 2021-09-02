@@ -50,6 +50,8 @@ class ClotureSortieService
 
     public function sortiesToDisplay(array $sorties): array
     {
+        $sortiesNotArchived = [];
+
         foreach ($sorties as $sortie) {
             if ($this->isLessThanOneMonth($sortie)){
                 $sortiesNotArchived[] = $sortie;
