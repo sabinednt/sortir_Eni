@@ -41,8 +41,12 @@ class ProfilType extends AbstractType
                 'constraints' => [
                     new File([
                         'maxSize' => '5M',
-                        'mimeTypes' => 'image/jpeg image/png',
-                        'mimeTypesMessage' => 'Votre photo doit être en .jpeg ou .png et ne pas dépasser 2 megaoctets'
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/jpg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Votre photo doit être en .jpeg, .jpg ou .png et ne pas dépasser 5 megaoctets'
                     ])
                 ]
             ])
