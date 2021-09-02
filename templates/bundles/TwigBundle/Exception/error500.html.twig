@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Quelque chose ne va pas :/{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div id="login-card" class=" border-0 shadow rounded-3 my-5 ">
+                <div class="card-body p-4 p-sm-5">
+                    <h5 class="card-title text-center mb-5 fw-bold fs-5">Quelque chose ne va pas :/</h5>
+                    <p>Essayez de nouveau plus tard, vérifiez les données utilisées !</p>
+                    <p>Code de l'erreur : {{ status_code }}</p>
+                    <p>Message de l'erreur : {{ status_text }}</p>
+                    <p>Message personalisé : {{ exception.message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

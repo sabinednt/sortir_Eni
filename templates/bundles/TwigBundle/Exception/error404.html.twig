@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page non trouvée :/{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div id="login-card" class=" border-0 shadow rounded-3 my-5 ">
+                    <div class="card-body p-4 p-sm-5">
+                        <h5 class="card-title text-center mb-5 fw-bold fs-5">Page non trouvée :/</h5>
+                        <p>La page que vous cherchez n'a pas été trouvée !</p>
+                        <p>Code de l'erreur : {{ status_code }}</p>
+                        <p>Message de l'erreur : {{ status_text }}</p>
+                        <p>Message personalisé : {{ exception.message }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -100,7 +100,7 @@
                 </tr>
                 {% for sortie in sorties %}
                 <tr>
-                    {% if sortie.etat.libelle != 'Annulée' and is_granted('sortie_archived', sortie) or is_granted("ROLE_ADMIN") %}
+                    {% if sortie.etat.libelle != 'Annulée' and is_granted('sortie_not_archived', sortie) or is_granted("ROLE_ADMIN") %}
                             <td>{{ sortie.nom }}</td>
                             <td>{{ sortie.dateHeureDebut|date('d/m/Y') }}</td>
                             <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>

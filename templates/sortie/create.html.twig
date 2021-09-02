@@ -97,42 +97,38 @@
                             <tr class="table">
                                 <th scope="row">Ville :  </th>
                                 <td>
-                                    {{form_widget(sortieForm.lieu.ville.nom) }}
+                                    {{ form_widget(sortieForm.ville) }}
                                 </td>
                             </tr>
 
                             <tr class="table">
                                 <th scope="row">lieu :  </th>
                                 <td>
-                                    {{form_widget(sortieForm.lieu.nom) }}
+                                    {{ form_widget(sortieForm.lieu) }}
                                 </td>
                             </tr>
 
                             <tr class="table">
                                 <th scope="row">Rue :  </th>
-                                <td>
-                                    {{form_widget(sortieForm.lieu.rue) }}
+                                <td id="rue">
                                 </td>
                             </tr>
 
                             <tr class="table">
                                 <th scope="row">Code Postal :  </th>
-                                <td>
-                                    {{form_widget(sortieForm.lieu.ville.code_postal) }}
+                                <td id="cp">
                                 </td>
                             </tr>
 
                             <tr class="table">
                                 <th scope="row">Latitude :  </th>
-                                <td>
-                                    {{form_widget(sortieForm.lieu.latitude) }}
+                                <td id="latitude">
                                 </td>
                             </tr>
 
                             <tr class="table">
                                 <th scope="row">Longitude :  </th>
-                                <td>
-                                    {{form_widget(sortieForm.lieu.longitude) }}
+                                <td id="longitude">
                                 </td>
                             </tr>
 
@@ -140,15 +136,14 @@
                         </table>
                     </div>
                 </div>
-
                 <!-- le partie boutons-->
 
                 <div class="col-lg-12 text-center">
 
                     {{ form_widget(sortieForm.save)}} &nbsp;
                     {{ form_widget(sortieForm.saveAndPublish)}} &nbsp;
-                    <button class="btn btn-primary btn-lg">Annuler</button>
-
+                    <a href="{{ path('sortie_list') }}" class="btn btn-primary btn-lg" title="Annuler">Annuler</a>
+                    <!-- <button class="btn btn-primary btn-lg">Annuler</button> -->
                 </div>
 
                 {{ form_end(sortieForm) }}
@@ -156,21 +151,68 @@
         </div>
     </div>
 
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script>
+    var $ville = $('#sortie_ville');
+    var arrayLieuId = [];
 
+    // When ville gets selected ...
+    $ville.change(function () {
+        var sortieLieu = $(this);
+        villeId = sortieLieu.val()
+        // ... retrieve the corresponding form.
+        var $form = $(this).closest('form');
+        // Simulate form data, but only include the selected ville value.
+        var data = {};
+        data[$ville.attr('name')] = $ville.val();
+        // Submit data via AJAX to the form's action path.
+        $.ajax({
+            url: "{{ path('sortie_lieux_ville') }}",
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                ville_id: villeId
+            },
+            success: function (lieux) {
+                $('#sortie_lieu').on('change', function () {
+                    inputSortieSelectedRue = $("#rue");
+                    inputSortieSelectedCp = $("#cp");
+                    inputSortieSelectedLatitude = $("#latitude");
+                    inputSortieSelectedLongitude = $("#longitude");
+                    // Empty input
+                    inputSortieSelectedRue.html('');
+                    inputSortieSelectedCp.html('');
+                    inputSortieSelectedLatitude.html('');
+                    inputSortieSelectedLongitude.html('');
+                    // get value id lieu selected and use for acces to lieu of liex array and get data
+                    var lieuSelectedId = lieuSelect.find("option:selected").val();
 
+                    inputSortieSelectedRue.append('<input type="text" name="rue" value="' + lieux[arrayLieuId[lieuSelectedId]].rue + '" />');
+                    inputSortieSelectedLatitude.append('<input type="text" name="latitude" value="' + lieux[arrayLieuId[lieuSelectedId]].latitude + '" />');
+                    inputSortieSelectedLongitude.append('<input type="text" name="longitude" value="' + lieux[arrayLieuId[lieuSelectedId]].longitude + '" />');
+                    inputSortieSelectedCp.append('<input type="text" name="code_postal" value="' + lieux[arrayLieuId[lieuSelectedId]].code_postal + '" />');
+                });
 
+                var lieuSelect = $("#sortie_lieu");
 
-    <!--
-<div class="container">
-    <div class="row">
-        <div class="col-xs-12">
-         {#    {{ form_start(sortieForm) }}
-                {{ form_widget(sortieForm) }}
-                <a href="{{ path('sortie_list') }}" title="Annuler">Annuler</a>
-            {{ form_end(sortieForm) }}#}
-        </div>
-    </div>
-</div>-->
+                var inputfieldLieu =  $("#sortie_lieu");
+                // Remove current options
+                lieuSelect.html('');
+
+                // Empty value ...
+                lieuSelect.append('<option value> Select a lieu de ' + sortieLieu.find("option:selected").text() + ' ...</option>');
+
+                $.each(lieux, function (key, lieu) {
+                    // Save the position of lieu in to the array of lieux with the key lieu.id
+                    arrayLieuId[lieu.id] = key;
+                    lieuSelect.append('<option value="' + lieu.id + '">' + lieu.nom + '</option>');
+                });
+            },
+            error: function (err) {
+                alert("Un erreur s'est produit lors du chargement des données ...");
+            }
+        });
+    });
+</script>
 
 {% endblock %}
-

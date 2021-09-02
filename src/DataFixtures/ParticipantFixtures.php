@@ -2,14 +2,14 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Campus;
 use App\Entity\Participant;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class ParticipantFixtures extends Fixture
+class ParticipantFixtures extends Fixture implements DependentFixtureInterface
 {
     /**
      * encoder.
@@ -25,13 +25,11 @@ class ParticipantFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-        // $product = new Product();
-        // $manager->persist($product);
-
         $faker = Factory::create('fr_FR');
-        $campus = new Campus();
 
-        $campus->setNom('Eni-Ecole');
+        // Recupere les campus avec getReferences
+        $campus = $this->getReference('campus_0');
+
         $actif = true;
 
         // Create Admin Participant
@@ -53,9 +51,18 @@ class ParticipantFixtures extends Fixture
 
         $manager->persist($participantAdmin);
 
+        $numeroCampus = 0;
+
         // Create all Participant
         for ($i = 0; $i < 49; ++$i) {
             $participant = new Participant();
+            // Recupere les campus avec getReferences
+            $campus = $this->getReference('campus_'.$numeroCampus);
+            if (2 === $numeroCampus) {
+                $numeroCampus = 0;
+            } else {
+                ++$numeroCampus;
+            }
 
             $nom = $faker->lastName();
             $prenom = $faker->firstName();
@@ -81,5 +88,12 @@ class ParticipantFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies()
+    {
+        return [
+            CampusFixtures::class,
+        ];
     }
 }

@@ -46,7 +46,7 @@ security:
     access_control:
         - { path: ^/ville, roles: ROLE_ADMIN }
         - { path: ^/campus, roles: ROLE_ADMIN }
-        - { path: ^/home, roles: ROLE_USER }
+        - { path: ^/sorties, roles: ROLE_USER }
         #- { path: ^/creerSortie, roles: ROLE_ORGANISATEUR}
 
     role_hierarchy:
