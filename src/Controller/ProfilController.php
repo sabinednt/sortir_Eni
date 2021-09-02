@@ -29,12 +29,19 @@ Class ProfilController extends AbstractController{
         // Form for change the profile
         
         $participantForm = $this->createForm(ProfilType::class, $participant);
-
         $participantForm->handleRequest($request);
+
 
         if ($participantForm->isSubmitted()){
 
             $profilePicture = $participantForm->get('fichier')->getData();
+
+            $pass = $participantForm->get('motPasse')->getData();
+
+            if($pass){
+                $hashPass = password_hash($pass, PASSWORD_BCRYPT);
+                $participant->setMotPasse($hashPass);
+            }
 
             if($profilePicture){
                 

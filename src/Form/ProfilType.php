@@ -25,23 +25,24 @@ class ProfilType extends AbstractType
             ->add('email')
             ->add('telephone')
             ->add('motPasse', RepeatedType::class, [
+            'mapped' => false,
             'type' => PasswordType::class,
             'invalid_message' => 'Les mots de passe ne correspondent pas',
             'options' => ['attr' => ['class' => 'password-field']],
-            'required' => true,
+            'required' => false,
             'first_options'  => ['label' => 'Mot de passe : '],
             'second_options' => ['label' => 'Confirmation : '],
         ])
             ->add('fichier', FileType::class, [
                 'data_class' => null,
-                'label' => 'Photo de profil',
+                'label' => 'Photo de profil :',
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [
                     new File([
-                        'maxSize' => '1024k',
-                        'mimeTypes' => 'image/jpeg',
-                        'mimeTypesMessage' => 'Votre photo doit être en .jpeg et ne pas dépasser 1 megaoctet'
+                        'maxSize' => '5M',
+                        'mimeTypes' => 'image/jpeg image/png',
+                        'mimeTypesMessage' => 'Votre photo doit être en .jpeg ou .png et ne pas dépasser 2 megaoctets'
                     ])
                 ]
             ])
