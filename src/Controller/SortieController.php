@@ -74,14 +74,13 @@ class SortieController extends AbstractController
     public function list(SortieRepository $sortieRepository,
                          ClotureSortieService $clotureSortieService,
                          Request $request
-    ): Response
-    {
+    ): Response {
         // $series = $sortieRepository->findAll();
         // $series = $sortieRepository->findBy([], ['nom' => 'DESC', 'dateLimiteInscription' => 'DESC'], 30);
         // $sorties = $sortieRepository->findSorties();
         $sorties = $sortieRepository->findAll();
-        $sorties = $clotureSortieService->updateEtatByDateSortie((array)$sorties);
-      //  $sorties = $clotureSortieService->sortiesToDisplay($sorties);
+        $sorties = $clotureSortieService->updateEtatByDateSortie((array) $sorties);
+        //  $sorties = $clotureSortieService->sortiesToDisplay($sorties);
 
         $data = new SearchData();
         $searchForm = $this->createForm(SearchType::class, $data);
@@ -89,12 +88,11 @@ class SortieController extends AbstractController
 
         $sorties = $sortieRepository->findSearch($data);
 
-
         // Appel une service de changement d'etat des sorties
 
         return $this->render('sortie/list.html.twig', [
             'sorties' => $sorties,
-            'searchForm' => $searchForm->createView()
+            'searchForm' => $searchForm->createView(),
         ]);
     }
 
@@ -125,6 +123,7 @@ class SortieController extends AbstractController
         if (!$sortie) {
             throw $this->createNotFoundException('Sortie non trouvée !');
         }
+
         $sortie->addParticipant($participant);
 
         $entityManager->persist($sortie);

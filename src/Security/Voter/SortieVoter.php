@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Security\Voter;
+
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Repository\ParticipantRepository;
@@ -8,10 +10,11 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
+
 class SortieVoter extends Voter
 {
     const AFFICHER = 'sortie_afficher';
-    const ARCHIVED = 'sortie_archived';
+    const NOTARCHIVED = 'sortie_not_archived';
     const PUBLIER = 'sortie_publier';
     const ANNULER = 'sortie_annuler';
     const MODIFIER = 'sortie_modifier';
@@ -32,17 +35,20 @@ class SortieVoter extends Voter
      * @var ClotureSortieService
      */
     private $clotureSortieService;
+
     public function __construct(Security $security, ParticipantRepository $participantRepository, ClotureSortieService $clotureSortieService)
     {
         $this->security = $security;
         $this->participantRepository = $participantRepository;
         $this->clotureSortieService = $clotureSortieService;
     }
+
     protected function supports($attribute, $subject)
     {
         // la méthode supports() permet de déterminer dans quel contexte le Voter doit s’appliquer
-        return in_array($attribute, [self::ARCHIVED, self::PUBLIER, self::ANNULER, self::CREATE, self::MODIFIER, self::DESISTER, self::INCRIPTION, self::AFFICHER]) && $subject instanceof Sortie;
+        return in_array($attribute, [self::NOTARCHIVED, self::PUBLIER, self::ANNULER, self::CREATE, self::MODIFIER, self::DESISTER, self::INCRIPTION, self::AFFICHER]) && $subject instanceof Sortie;
     }
+
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         // on récupère l'utilisateur connecté grâce au Token
@@ -53,7 +59,7 @@ class SortieVoter extends Voter
         }
         $sortie = $subject;
         switch ($attribute) {
-            case self::ARCHIVED:
+            case self::NOTARCHIVED:
                 return $this->canAfficherArchived($sortie);
             case self::AFFICHER:
                 return $this->canAfficher($sortie);
@@ -70,53 +76,68 @@ class SortieVoter extends Voter
             case self::INCRIPTION:
                 return $this->canInscrire($sortie, $user);
         }
+
         return false;
     }
+
     /** * On vérifie si le participant peut afficher la sortie. */
     private function canAfficher(Sortie $sortie): bool
     {
         return in_array($sortie->getEtat()->getLibelle(), ['Ouverte', 'Fermé', 'Activité en cours']) || ($this->security->isGranted('ROLE_ADMIN'));
     }
-    /** * On vérifie si le participant peut afficher la sortie. */
+
+    /** * On vérifie si la sortie c'est . */
     private function canAfficherArchived(Sortie $sortie): bool
     {
         return $this->clotureSortieService->isLessThanOneMonth($sortie);
     }
+
     /** * On vérifie si le Organisateur peut publier la sortie. */
     private function canPublier(Sortie $sortie, UserInterface $user): bool
     {
         $organisateur = $this->getParticipantByUser($user);
+
         return ($sortie->getOrganisateur() === $organisateur) && 'Créée' === $sortie->getEtat()->getLibelle() || ($this->security->isGranted('ROLE_ADMIN') && 'Créée' === $sortie->getEtat()->getLibelle());
     }
+
     /** *  On vérifie si le Organisateur peut annule la sortie. */
     private function canAnnuler(Sortie $sortie, UserInterface $user): bool
     {
         $organisateur = $this->getParticipantByUser($user);
+
         return ($sortie->getOrganisateur() === $organisateur && 'Ouverte' === $sortie->getEtat()->getLibelle()) || ($this->security->isGranted('ROLE_ADMIN') && 'Ouverte' === $sortie->getEtat()->getLibelle());
     }
+
     /** * On vérifie si le Organisateur peut créé une sortie. */
     private function canCreate(Sortie $sortie, UserInterface $user): bool
     {
         return (null !== $user) || $this->security->isGranted('ROLE_ADMIN');
     }
+
     /** * On vérifie si le $participant peux il se desister une sortie. */
     private function canDesister(Sortie $sortie, UserInterface $user): bool
     {
         $participant = $this->getParticipantByUser($user);
+
         return ($sortie->getParticipant($user->getUsername()) === $participant) && in_array($sortie->getEtat()->getLibelle(), ['Ouverte', 'Fermé']) || ($this->security->isGranted('ROLE_ADMIN') && $sortie->getParticipant($user->getUsername()) === $participant);
     }
+
     /** * On vérifie si le participant peux il modifier une sortie. */
     private function canModifier(Sortie $sortie, UserInterface $user): bool
     {
         $organisateur = $this->getParticipantByUser($user);
+
         return ($sortie->getOrganisateur() === $organisateur) && 'Créée' === $sortie->getEtat()->getLibelle() || ($this->security->isGranted('ROLE_ADMIN') && 'Créée' === $sortie->getEtat()->getLibelle());
     }
+
     /** * On vérifie si le participant peux il s'inscrire a une sortie. */
     private function canInscrire(Sortie $sortie, UserInterface $user): bool
     {
         $participant = $this->getParticipantByUser($user);
+
         return $sortie->getParticipant($user->getUsername()) !== $participant && 'Ouverte' === $sortie->getEtat()->getLibelle() && count($sortie->getParticipants()) < $sortie->getNbInscriptionsMax();
     }
+
     /**
      * getParticipantByUser.
      *
@@ -128,6 +149,7 @@ class SortieVoter extends Voter
     {
         $email = $user->getUsername();
         $participant = $this->participantRepository->findOneByEmail($email);
+
         return $participant;
     }
 }
