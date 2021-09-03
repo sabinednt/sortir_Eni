@@ -9,8 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -65,16 +64,20 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
     {
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfTokenException();
+            throw new CustomUserMessageAuthenticationException('Cette token c\'est pas valide !');
         }
 
         $user = $this->entityManager->getRepository(Participant::class)->findOneBy(['email' => $credentials['email']]);
 
         if (!$user) {
-            throw new UsernameNotFoundException('Email could not be found.');
+            throw new CustomUserMessageAuthenticationException('Aucun email n’a pu être trouvé.');
         }
 
-        return $user;
+        if ($user->getActif()) {
+            return $user;
+        }
+
+        throw new CustomUserMessageAuthenticationException('Ce participant est actuellement inactif. Veuillez contacter l’administrateur du site : admin@sortir.com');
     }
 
     public function checkCredentials($credentials, UserInterface $user)
