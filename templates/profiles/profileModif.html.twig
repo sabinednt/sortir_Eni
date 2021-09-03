@@ -8,22 +8,81 @@
 
         <div class="row justify-content-around">
             <div class="col-lg-3">
-                <img class="img-fluid" src="{{ asset(participant.fichier) }}" alt="Photo de profil">
+                <img class="img-fluid photo-profil" src="{{ asset(participant.fichier) }}" alt="Photo de profil">
             </div>
 
             <div class="col-lg-6">
                 <h2>Mon profil</h2>
-                    {{ form_start(participantForm) }}
-                    {{ form_widget(participantForm) }}
+                        {{ form_start(participantForm) }}
+                        <table class="table">
+                            <tbody>
 
-                    <div>
-                        <button>Enregistrer</button>
+                            <tr class="table">
+                                <th scope="row">Pseudo :  </th>
+                                <td>
+                                    {{ form_widget(participantForm.pseudo) }}
+                                </td>
+                            </tr>
 
-                        {{ form_end(participantForm) }}
+                            <tr class="table">
+                                <th scope="row">Prénom :  </th>
+                                <td>
+                                    {{ form_widget(participantForm.prenom) }}
+                                </td>
+                            </tr>
 
-                        <button><a href="{{ path('sortie_list') }}" title="Annuler">Annuler</a></button>
+                            <tr class="table">
+                                <th scope="row">Nom :  </th>
+                                <td>
+                                    {{ form_widget(participantForm.nom) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">Email :  </th>
+                                <td>
+                                    {{ form_widget(participantForm.email) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">Téléphone :  </th>
+                                <td>
+                                    {{ form_widget(participantForm.telephone) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">Mot de passe :  </th>
+                                <td>
+                                    {{ form_widget(participantForm.motPasse) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">Photo de profil :  </th>
+                                <td>
+                                    {{ form_widget(participantForm.fichier) }}
+                                </td>
+                            </tr>
+
+                            <tr class="table">
+                                <th scope="row">Campus :  </th>
+                                <td>
+                                    {{ form_widget(participantForm.campus) }}
+                                </td>
+                            </tr>
+
+
+                            </tbody>
+                        </table>
+                        <div>
+                            <button class="btn btn-primary btn-lg">Enregistrer</button>
+
+                            {{ form_end(participantForm) }}                   
+                            <a class="btn btn-primary btn-lg" href="{{ path('sortie_list') }}">Annuler</a>
+                        </div>
                     </div>
-            </div>
         </div>
     </div>
 {% endblock %}
