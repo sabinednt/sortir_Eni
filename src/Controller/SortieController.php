@@ -229,7 +229,7 @@ class SortieController extends AbstractController
             $entityManager->flush();
 
             //redirection vers la page d'accueil
-            return $this->redirectToRoute('main_home');
+            return $this->redirectToRoute('sortie_list');
         }
 
         return $this->render('sortie/annule.html.twig', [
