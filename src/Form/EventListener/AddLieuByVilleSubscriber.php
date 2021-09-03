@@ -5,6 +5,7 @@ namespace App\Form\EventListener;
 use App\Entity\Lieu;
 use App\Entity\Ville;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -65,11 +66,17 @@ class AddLieuByVilleSubscriber implements EventSubscriberInterface
 
     private function addVilleEtLieuxForm(Form $form, ?Ville $ville): Form
     {
+        ini_set('memory_limit', '1024M');
+
         $form
             ->add('ville', EntityType::class, [
                     'class' => Ville::class,
                     'choice_label' => 'nom',
                     'placeholder' => 'Selectione une Ville',
+                    'query_builder' => function (EntityRepository $er) {
+                        return $er->createQueryBuilder('v')
+                            ->orderBy('v.nom', 'ASC');
+                    },
                     'mapped' => false,
                     'data' => $ville,
             ])

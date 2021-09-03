@@ -4,13 +4,6 @@
 {% block title %}Create une nouvelle Sortie !{% endblock %}
 
 {% block body %}
-    {# <div>
-    {{ form_start(sortieForm) }}
-    {{ form_widget(sortieForm) }}
-    <button type="submit">Create sortie!</button>
-    {{ form_end(sortieForm) }}
-</div> #}
-
 
     <div class="container">
         <div id="sortie-card" class=" border-0 shadow rounded-3 my-3 ">
@@ -143,7 +136,6 @@
                     {{ form_widget(sortieForm.save)}} &nbsp;
                     {{ form_widget(sortieForm.saveAndPublish)}} &nbsp;
                     <a href="{{ path('sortie_list') }}" class="btn btn-primary btn-lg" title="Annuler">Annuler</a>
-                    <!-- <button class="btn btn-primary btn-lg">Annuler</button> -->
                 </div>
 
                 {{ form_end(sortieForm) }}
