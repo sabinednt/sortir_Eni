@@ -30,8 +30,8 @@ class ProfilType extends AbstractType
             'invalid_message' => 'Les mots de passe ne correspondent pas',
             'options' => ['attr' => ['class' => 'password-field']],
             'required' => false,
-            'first_options'  => ['label' => 'Mot de passe : '],
-            'second_options' => ['label' => 'Confirmation : '],
+            'first_options'  => ['label' => ' ', 'attr' => ['placeholder' => 'Entrez votre mot de passe']],
+            'second_options' => ['label' => ' ', 'attr' => ['placeholder' => 'confirmez votre mot de passe']],
         ])
             ->add('fichier', FileType::class, [
                 'data_class' => null,
